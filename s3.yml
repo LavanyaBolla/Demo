@@ -1,0 +1,16 @@
+Parameters:
+  S3BucketName:
+    Type: String
+    Description: Name of S3 Bucket
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Ref S3BucketName
+      PublicAccessBlockConfiguration: 
+        BlockPublicAcls : FALSE
+        BlockPublicPolicy : TRUE
+        IgnorePublicAcls : TRUE
+        RestrictPublicBuckets : TRUE

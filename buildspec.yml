@@ -1,0 +1,42 @@
+version: 0.2
+env:
+  variables:
+    # Definining CloudFormation Teamplate and Ruleset as variables - part of the code repo
+    CF_TEMPLATE: "s3.yml"
+    CF_ORG_RULESET:  "s3yml.ruleset"
+phases:
+  install:
+    commands:
+      - echo "pip install cfn-lint"
+      - echo "yum update -y"
+      - echo "yum install cargo -y"
+      - echo "yum install git -y"
+      - echo "test"
+  pre_build:
+    commands:
+      - echo "Setting up the environment for AWS CloudFormation Guard"
+      - echo "More info https://github.com/aws-cloudformation/cloudformation-guard"
+      - echo "Install Rust"
+  build:
+    commands:
+       - echo "Pull GA release from github"
+       - echo "More info https://github.com/aws-cloudformation/cloudformation-guard/releases"
+       - echo "wget https://github.com/aws-cloudformation/cloudformation-guard/releases/download/1.0.0/cfn-guard-linux-1.0.0.tar.gz"
+       - echo "Extract cfn-guard"
+       - echo "tar xvf cfn-guard-linux-1.0.0.tar.gz" .
+    when:
+      branch:
+        only:
+          - master
+  post_build:
+    commands:
+       - echo "cfn-lint $CF_TEMPLATE"
+       - echo "Validate CloudFormation template with cfn-guard tool"
+       - echo "More information https://github.com/aws-cloudformation/cloudformation-guard/blob/master/cfn-guard/README.md"
+       - echo "cfn-guard-linux/cfn-guard check --rule_set $CF_ORG_RULESET --template $CF_TEMPLATE --strict-checks"
+artifacts:
+  files:
+    - s3.yml
+    - s3-values-dev.json
+    - s3-values-test.json
+  name: guard_templates
